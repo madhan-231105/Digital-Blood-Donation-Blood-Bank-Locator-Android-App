@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,7 +53,7 @@ dependencies {
 
     // Glide
     implementation(libs.glide)
-
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
