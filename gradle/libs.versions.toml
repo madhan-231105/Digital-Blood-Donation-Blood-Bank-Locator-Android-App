@@ -1,0 +1,39 @@
+[versions]
+agp = "8.3.2"
+firebaseBom = "32.2.0"
+maps = "18.1.0"
+location = "21.0.1"
+glide = "4.15.1"
+junit = "4.13.2"
+androidxJunit = "1.1.5"
+espresso = "3.5.1"
+
+[libraries]
+
+# Core
+appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.6.1" }
+material = { group = "com.google.android.material", name = "material", version = "1.9.0" }
+activity = { group = "androidx.activity", name = "activity", version = "1.8.2" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version = "2.1.4" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+
+# Google Play Services
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "maps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "location" }
+
+# Glide
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+
