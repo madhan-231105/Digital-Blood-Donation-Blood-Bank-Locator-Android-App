@@ -42,7 +42,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="Password (Min 6 chars)"
             android:inputType="textPassword"
             app:layout_constraintTop_toBottomOf="@id/etEmail"
             android:layout_marginTop="12dp"/>
@@ -51,16 +51,19 @@
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone Number"
+            android:hint="Phone Number (10 digits)"
             android:inputType="phone"
+            android:maxLength="10"
             app:layout_constraintTop_toBottomOf="@id/etPassword"
             android:layout_marginTop="12dp"/>
 
-        <EditText
-            android:id="@+id/etBloodGroup"
+        <!-- CHANGED TO SPINNER -->
+        <Spinner
+            android:id="@+id/spinnerBloodGroup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Blood Group (e.g. O+)"
+            android:layout_height="50dp"
+            android:entries="@array/blood_groups"
+            android:background="@android:drawable/btn_dropdown"
             app:layout_constraintTop_toBottomOf="@id/etPhone"
             android:layout_marginTop="12dp"/>
 
@@ -68,9 +71,9 @@
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register as Donor"
+            android:text="Register"
             android:backgroundTint="#D32F2F"
-            app:layout_constraintTop_toBottomOf="@id/etBloodGroup"
+            app:layout_constraintTop_toBottomOf="@id/spinnerBloodGroup"
             android:layout_marginTop="30dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

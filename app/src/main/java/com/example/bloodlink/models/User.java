@@ -1,7 +1,7 @@
 package com.example.bloodlink.models;
 
 public class User {
-    private String uid, name, email, phone, bloodGroup, profileImageUrl, type; // type: "donor" or "user"
+    private String uid, name, email, phone, bloodGroup, profileImageUrl, type;
     private double latitude, longitude;
 
     public User() {} // Required for Firestore
@@ -17,7 +17,9 @@ public class User {
         this.longitude = lng;
     }
 
-    // Getters and Setters for all fields
+    // --- ADDED GETTER FOR UID ---
+    public String getUid() { return uid; }
+
     public String getName() { return name; }
     public String getBloodGroup() { return bloodGroup; }
     public String getPhone() { return phone; }
