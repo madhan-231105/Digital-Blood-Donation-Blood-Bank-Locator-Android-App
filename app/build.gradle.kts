@@ -39,8 +39,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-
-    // Firebase BoM
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.16")
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")    // Firebase BoM
     implementation(platform(libs.firebase.bom))
 
     implementation(libs.firebase.auth)
