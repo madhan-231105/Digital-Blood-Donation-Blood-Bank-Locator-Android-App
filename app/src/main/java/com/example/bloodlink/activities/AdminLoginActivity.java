@@ -3,7 +3,6 @@ package com.example.bloodlink.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,40 +13,41 @@ import com.example.bloodlink.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class LoginActivity extends AppCompatActivity {
+public class AdminLoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private FirebaseAuth mAuth;
-
-    private String role; // 🔥 user or admin
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_admin_login);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        role = getIntent().getStringExtra("ROLE");
+        etEmail = findViewById(R.id.etAdminEmail);
+        etPassword = findViewById(R.id.etAdminPassword);
 
-        etEmail = findViewById(R.id.etLoginEmail);
-        etPassword = findViewById(R.id.etLoginPassword);
-        Button btnLogin = findViewById(R.id.btnLogin);
-        TextView tvRegister = findViewById(R.id.tvGoToRegister);
+        findViewById(R.id.btnAdminLogin)
+                .setOnClickListener(v -> loginAdmin());
 
-        btnLogin.setOnClickListener(v -> loginUser());
-
-        tvRegister.setOnClickListener(v ->
-                startActivity(new Intent(this, RegisterActivity.class)));
+        findViewById(R.id.tvAdminRegister)
+                .setOnClickListener(v ->
+                        startActivity(new Intent(this,
+                                AdminRegisterActivity.class)));
     }
 
-    private void loginUser() {
+    private void loginAdmin() {
 
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -56,32 +56,35 @@ public class LoginActivity extends AppCompatActivity {
 
                     String uid = mAuth.getCurrentUser().getUid();
 
-                    FirebaseFirestore.getInstance()
-                            .collection("users")
-                            .document(uid)
+                    db.collection("users").document(uid)
                             .get()
                             .addOnSuccessListener(snapshot -> {
 
-                                String type = snapshot.getString("type");
+                                String role = snapshot.getString("type");
 
-                                if ("admin".equals(type)) {
+                                if ("admin".equals(role)) {
+
+                                    Toast.makeText(this,
+                                            "Admin Login Successful",
+                                            Toast.LENGTH_SHORT).show();
 
                                     startActivity(new Intent(this,
                                             AdminDashboardActivity.class));
+                                    finish();
 
                                 } else {
 
-                                    startActivity(new Intent(this,
-                                            MainActivity.class));
-                                }
+                                    Toast.makeText(this,
+                                            "This account is not Admin",
+                                            Toast.LENGTH_LONG).show();
 
-                                finish();
+                                    mAuth.signOut();
+                                }
                             });
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this,
                                 "Login Failed: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show());
+                                Toast.LENGTH_LONG).show());
     }
-
 }
