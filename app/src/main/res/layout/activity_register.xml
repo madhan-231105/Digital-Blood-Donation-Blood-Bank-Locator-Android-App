@@ -1,80 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="#F5F5F5">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp">
 
+        <!-- Profile Image -->
         <ImageView
             android:id="@+id/imgProfile"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@android:drawable/ic_menu_camera"
-            android:background="#EEEEEE"
+            android:background="@drawable/circle_background"
             android:scaleType="centerCrop"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Name -->
         <EditText
             android:id="@+id/etName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Full Name"
+            android:hint="@string/hint_name"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/imgProfile"
-            android:layout_marginTop="20dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Email -->
         <EditText
             android:id="@+id/etEmail"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/etName"
-            android:layout_marginTop="12dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Password -->
         <EditText
             android:id="@+id/etPassword"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Password (Min 6 chars)"
+            android:hint="@string/hint_password"
             android:inputType="textPassword"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/etEmail"
-            android:layout_marginTop="12dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Phone -->
         <EditText
             android:id="@+id/etPhone"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Phone Number (10 digits)"
+            android:hint="@string/hint_phone"
             android:inputType="phone"
             android:maxLength="10"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/etPassword"
-            android:layout_marginTop="12dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- CHANGED TO SPINNER -->
+        <!-- Blood Group Spinner -->
         <Spinner
             android:id="@+id/spinnerBloodGroup"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:entries="@array/blood_groups"
-            android:background="@android:drawable/btn_dropdown"
+            android:background="@drawable/edittext_background"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/etPhone"
-            android:layout_marginTop="12dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- District Spinner -->
+        <Spinner
+            android:id="@+id/spinnerDistrict"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:entries="@array/districts"
+            android:background="@drawable/edittext_background"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/spinnerBloodGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Register Button -->
         <Button
             android:id="@+id/btnRegister"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="@string/btn_register"
             android:backgroundTint="#D32F2F"
-            app:layout_constraintTop_toBottomOf="@id/spinnerBloodGroup"
-            android:layout_marginTop="30dp"/>
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@id/spinnerDistrict"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

@@ -1,6 +1,34 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">BloodLink</string>
 
+    <!-- Labels -->
+    <string name="blood_group_label">Blood Group: %1$s</string>
+    <string name="district_label">District: %1$s</string>
+    <string name="distance_label">Distance: %1$.2f km</string>
+    <string name="phone_label">Phone: %1$s</string>
+
+    <!-- Buttons -->
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_logout">Logout</string>
+    <string name="btn_request">Request Blood</string>
+    <string name="btn_find_banks">Find Blood Banks</string>
+    <string name="btn_save_changes">Save Changes</string>
+    <string name="btn_call">Call</string>
+
+    <!-- Titles -->
+    <string name="title_nearby_donors">Nearby Donors</string>
+    <string name="title_edit_profile">Edit Profile</string>
+
+    <!-- Hints -->
+    <string name="hint_name">Full Name</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password (Min 6 chars)</string>
+    <string name="hint_phone">Phone Number</string>
+
+    <!-- Blood Groups -->
     <string-array name="blood_groups">
         <item>Select Blood Group</item>
         <item>A+</item>
@@ -12,4 +40,15 @@
         <item>AB+</item>
         <item>AB-</item>
     </string-array>
+
+    <!-- Districts -->
+    <string-array name="districts">
+        <item>Select District</item>
+        <item>Chennai</item>
+        <item>Coimbatore</item>
+        <item>Madurai</item>
+        <item>Salem</item>
+        <item>Trichy</item>
+    </string-array>
+
 </resources>

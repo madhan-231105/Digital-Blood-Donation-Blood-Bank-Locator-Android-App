@@ -1,31 +1,42 @@
 package com.example.bloodlink.activities;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.widget.*;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.bloodlink.R;
-import com.example.bloodlink.utils.DatabaseHelper; // Import Helper
+import com.example.bloodlink.models.User;
+import com.example.bloodlink.utils.DatabaseHelper;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EditProfileActivity extends AppCompatActivity {
 
     private EditText etName, etPhone;
-    private Spinner spinnerBloodGroup;
+    private AutoCompleteTextView autoBloodGroup, autoDistrict;
     private ImageView imgProfile;
-    private Button btnSave;
     private Bitmap imageBitmap;
+
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private DatabaseHelper dbHelper;
+
+    private final String[] bloodGroups = {
+            "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"
+    };
+
+    private final String[] districts = {
+            "Chennai", "Coimbatore", "Madurai", "Salem", "Trichy"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,63 +49,118 @@ public class EditProfileActivity extends AppCompatActivity {
 
         etName = findViewById(R.id.etEditName);
         etPhone = findViewById(R.id.etEditPhone);
-        spinnerBloodGroup = findViewById(R.id.spinnerEditBloodGroup);
+        autoBloodGroup = findViewById(R.id.autoBloodGroup);
+        autoDistrict = findViewById(R.id.autoDistrict);
         imgProfile = findViewById(R.id.imgEditProfile);
-        btnSave = findViewById(R.id.btnSaveChanges);
+        Button btnSave = findViewById(R.id.btnSaveChanges);
 
+        setupDropdowns();
         loadUserData();
+        setupImagePicker();
 
-        ActivityResultLauncher<String> getContent = registerForActivityResult(
-                new ActivityResultContracts.GetContent(),
-                uri -> {
-                    if(uri != null) {
-                        imgProfile.setImageURI(uri);
-                        try {
-                            imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                        } catch (IOException e) { e.printStackTrace(); }
-                    }
-                });
-
-        imgProfile.setOnClickListener(v -> getContent.launch("image/*"));
         btnSave.setOnClickListener(v -> saveChanges());
     }
 
+    private void setupDropdowns() {
+
+        ArrayAdapter<String> bloodAdapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        bloodGroups);
+
+        ArrayAdapter<String> districtAdapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        districts);
+
+        autoBloodGroup.setAdapter(bloodAdapter);
+        autoDistrict.setAdapter(districtAdapter);
+    }
+
     private void loadUserData() {
+
         String uid = mAuth.getCurrentUser().getUid();
 
-        // 1. Load Text from Firebase
-        db.collection("users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                etName.setText(documentSnapshot.getString("name"));
-                etPhone.setText(documentSnapshot.getString("phone"));
-                // (Set Spinner logic here as before...)
-            }
-        });
+        db.collection("users").document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
 
-        // 2. Load Image from SQLite
+                    User user = documentSnapshot.toObject(User.class);
+
+                    if (user != null) {
+                        etName.setText(user.getName());
+                        etPhone.setText(user.getPhone());
+
+                        // 🔥 Show DB value in dropdown
+                        autoBloodGroup.setText(user.getBloodGroup(), false);
+                        autoDistrict.setText(user.getDistrict(), false);
+                    }
+                });
+
         Bitmap bmp = dbHelper.getImage(uid);
         if (bmp != null) {
             imgProfile.setImageBitmap(bmp);
         }
     }
 
-    private void saveChanges() {
-        String uid = mAuth.getCurrentUser().getUid();
+    private void setupImagePicker() {
 
-        // 1. Update SQLite Image
-        if (imageBitmap != null) {
-            dbHelper.insertOrUpdateImage(uid, imageBitmap);
+        ActivityResultLauncher<String> getContent =
+                registerForActivityResult(
+                        new ActivityResultContracts.GetContent(),
+                        uri -> {
+                            if (uri != null) {
+                                try {
+                                    imageBitmap = MediaStore.Images
+                                            .Media
+                                            .getBitmap(getContentResolver(), uri);
+                                    imgProfile.setImageBitmap(imageBitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+        imgProfile.setOnClickListener(v -> getContent.launch("image/*"));
+    }
+
+    private void saveChanges() {
+
+        String name = etName.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
+        String bloodGroup = autoBloodGroup.getText().toString().trim();
+        String district = autoDistrict.getText().toString().trim();
+
+        if (TextUtils.isEmpty(name) ||
+                TextUtils.isEmpty(phone) ||
+                TextUtils.isEmpty(bloodGroup) ||
+                TextUtils.isEmpty(district)) {
+
+            Toast.makeText(this,
+                    "Fill all fields",
+                    Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // 2. Update Firebase Text Data
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("name", etName.getText().toString());
-        updates.put("phone", etPhone.getText().toString());
-        updates.put("bloodGroup", spinnerBloodGroup.getSelectedItem().toString());
+        String uid = mAuth.getCurrentUser().getUid();
 
-        db.collection("users").document(uid).update(updates)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show();
+        db.collection("users").document(uid)
+                .update(
+                        "name", name,
+                        "phone", phone,
+                        "bloodGroup", bloodGroup,
+                        "district", district
+                )
+                .addOnSuccessListener(unused -> {
+
+                    if (imageBitmap != null) {
+                        dbHelper.insertOrUpdateImage(uid, imageBitmap);
+                    }
+
+                    Toast.makeText(this,
+                            "Profile Updated",
+                            Toast.LENGTH_SHORT).show();
+
                     finish();
                 });
     }
