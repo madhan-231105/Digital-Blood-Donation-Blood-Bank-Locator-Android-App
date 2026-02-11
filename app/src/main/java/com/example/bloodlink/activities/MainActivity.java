@@ -92,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnOpenMap)
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, NearbyMapActivity.class)));
-
+        findViewById(R.id.btnNotifications)
+                .setOnClickListener(v ->
+                        startActivity(new Intent(this, NotificationActivity.class)));
         findViewById(R.id.btnRequest)
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, RequestBloodActivity.class)));
