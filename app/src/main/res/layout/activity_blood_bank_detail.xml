@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvDetailName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:text="Blood Bank Name"/>
+
+        <TextView
+            android:id="@+id/tvDetailType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/tvDetailPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvDetailDistrict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="District"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Available Stock"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/tvDetailStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"/>
+
+        <Button
+            android:id="@+id/btnCallBank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call Blood Bank"
+            android:backgroundTint="#D32F2F"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

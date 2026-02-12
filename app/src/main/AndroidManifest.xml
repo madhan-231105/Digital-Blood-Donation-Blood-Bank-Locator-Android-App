@@ -97,6 +97,11 @@
             android:name=".activities.EditProfileActivity"
             android:exported="false"/>
         <activity android:name=".activities.DonorListActivity"/>
+        <activity
+            android:name=".activities.BloodBankDetailActivity"
+            android:exported="false" />
+        <activity android:name=".activities.HistoryActivity" />
+        <activity android:name=".activities.BloodBankActivity" />
 
         <!-- ================= BACKGROUND SERVICE ================= -->
 

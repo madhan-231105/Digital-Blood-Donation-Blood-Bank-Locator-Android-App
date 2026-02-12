@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:elevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,15 +22,39 @@
             android:text="Blood Bank Name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#000000"/>
+            android:textColor="#D32F2F"/>
 
         <TextView
-            android:id="@+id/tvBankStock"
+            android:id="@+id/tvBankType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stock: A+: 10, B+: 5"
-            android:textSize="14sp"
-            android:layout_marginTop="5dp"
-            android:textColor="#666666"/>
+            android:text="Type"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvBankDistrict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="District"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvBankPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:layout_marginTop="4dp"/>
+
+
+        <Button
+            android:id="@+id/btnCallBank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Call"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#D32F2F"
+            android:textColor="@android:color/white"/>
+
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
