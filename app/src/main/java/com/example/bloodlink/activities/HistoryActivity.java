@@ -1,36 +1,88 @@
 package com.example.bloodlink.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bloodlink.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.bloodlink.adapters.RequestHistoryAdapter;
+import com.example.bloodlink.models.RequestModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RequestHistoryAdapter adapter;
+    private List<RequestModel> requestList;
+
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+
+    private TextView tvEmptyState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
-        bottomNav.setSelectedItemId(R.id.nav_history);
+        recyclerView = findViewById(R.id.recyclerHistory);
+        tvEmptyState = findViewById(R.id.tvEmptyState);
 
-        bottomNav.setOnItemSelectedListener(item -> {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            if (item.getItemId() == R.id.nav_home) {
-                startActivity(new Intent(this, MainActivity.class));
-                return true;
-            }
+        requestList = new ArrayList<>();
+        adapter = new RequestHistoryAdapter(this, requestList);
+        recyclerView.setAdapter(adapter);
 
-            if (item.getItemId() == R.id.nav_banks) {
-                startActivity(new Intent(this, BloodBankActivity.class));
-                return true;
-            }
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-            return true;
-        });
+        loadMyRequests();
+    }
+
+    private void loadMyRequests() {
+
+        if (mAuth.getCurrentUser() == null) return;
+
+        String uid = mAuth.getCurrentUser().getUid();
+
+        db.collection("blood_requests")   // ✅ correct collection
+                .whereEqualTo("requesterUid", uid)   // ✅ correct field
+                .get()
+                .addOnSuccessListener(query -> {
+
+                    requestList.clear();
+
+                    for (var doc : query.getDocuments()) {
+
+                        RequestModel model = doc.toObject(RequestModel.class);
+
+                        if (model != null) {
+                            model.setId(doc.getId());
+                            requestList.add(model);
+                        }
+                    }
+
+                    adapter.notifyDataSetChanged();
+
+                    if (requestList.isEmpty()) {
+                        tvEmptyState.setVisibility(View.VISIBLE);
+                    } else {
+                        tvEmptyState.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Failed to load history",
+                                Toast.LENGTH_SHORT).show());
     }
 }

@@ -2,8 +2,8 @@ package com.example.bloodlink.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,25 +36,59 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private TextView tvName, tvBloodGroup, tvPhone, tvUserDistrict;
-    private ImageView imgProfile, btnEdit, btnLogout;
+    private ImageView imgProfile, btnEdit, btnLogout, btnNotifications;
+    private Button btnOpenMap, btnRequest;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+
+        // 🔐 Safety Check
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        setContentView(R.layout.activity_main);
+
         db = FirebaseFirestore.getInstance();
+
+        initViews();
+        setupRecyclerView();
+        setupClickListeners();
+        setupBottomNavigation();
+
+        loadUserProfile();
+    }
+
+    // ================= INIT VIEWS =================
+
+    private void initViews() {
 
         tvName = findViewById(R.id.tvUserName);
         tvBloodGroup = findViewById(R.id.tvUserBloodGroup);
         tvPhone = findViewById(R.id.tvUserPhone);
         tvUserDistrict = findViewById(R.id.tvUserDistrict);
+
         imgProfile = findViewById(R.id.imgUserProfile);
         btnEdit = findViewById(R.id.btnEditProfile);
         btnLogout = findViewById(R.id.btnLogout);
+        btnNotifications = findViewById(R.id.btnNotifications);
+
+        btnOpenMap = findViewById(R.id.btnOpenMap);
+        btnRequest = findViewById(R.id.btnRequest);
+
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this::loadDonors);
+    }
+
+    // ================= RECYCLER VIEW =================
+
+    private void setupRecyclerView() {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
         donorList = new ArrayList<>();
         adapter = new DonorAdapter(this, donorList);
         recyclerView.setAdapter(adapter);
+    }
 
-        swipeRefreshLayout.setOnRefreshListener(this::loadDonors);
+    // ================= CLICK LISTENERS =================
+
+    private void setupClickListeners() {
 
         btnEdit.setOnClickListener(v ->
                 startActivity(new Intent(this, EditProfileActivity.class)));
@@ -73,32 +110,46 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
         });
 
-        setupBottomNavigation();
+        // 🔔 Notifications Page
+        btnNotifications.setOnClickListener(v ->
+                startActivity(new Intent(this, NotificationActivity.class)));
 
-        loadUserProfile();
+        // 🗺️ Find Blood Banks → OPEN MAP PAGE
+        btnOpenMap.setOnClickListener(v ->
+                startActivity(new Intent(this, NearbyMapActivity.class)));
+
+        // 🩸 Request Blood Page
+        btnRequest.setOnClickListener(v ->
+                startActivity(new Intent(this, RequestBloodActivity.class)));
     }
+
+    // ================= BOTTOM NAVIGATION =================
 
     private void setupBottomNavigation() {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
-
         bottomNav.setSelectedItemId(R.id.nav_home);
 
         bottomNav.setOnItemSelectedListener(item -> {
 
-            if (item.getItemId() == R.id.nav_home) {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
                 return true;
             }
 
-            if (item.getItemId() == R.id.nav_banks) {
+            if (id == R.id.nav_banks) {
                 startActivity(new Intent(this, BloodBankActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
 
-            if (item.getItemId() == R.id.nav_history) {
+            if (id == R.id.nav_history) {
                 startActivity(new Intent(this, HistoryActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
 
@@ -106,15 +157,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadUserProfile() {
+    // ================= LOAD USER PROFILE =================
 
-        if (mAuth.getCurrentUser() == null) return;
+    private void loadUserProfile() {
 
         String uid = mAuth.getCurrentUser().getUid();
 
-        db.collection("users").document(uid)
+        db.collection("users")
+                .document(uid)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+
+                    if (!snapshot.exists()) return;
 
                     User user = snapshot.toObject(User.class);
 
@@ -127,8 +181,13 @@ public class MainActivity extends AppCompatActivity {
 
                         loadDonors();
                     }
-                });
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this,
+                                "Failed to load profile",
+                                Toast.LENGTH_SHORT).show());
 
+        // 🔹 Load Profile Image
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         Bitmap bmp = dbHelper.getImage(uid);
 
@@ -138,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
             imgProfile.setImageResource(R.mipmap.ic_launcher_round);
         }
     }
+
+    // ================= LOAD DONORS =================
 
     private void loadDonors() {
 
@@ -162,15 +223,14 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Collections.shuffle(donorList);
-
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 })
                 .addOnFailureListener(e -> {
+                    swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(this,
                             "Failed to load donors",
                             Toast.LENGTH_SHORT).show();
-                    swipeRefreshLayout.setRefreshing(false);
                 });
     }
 }
