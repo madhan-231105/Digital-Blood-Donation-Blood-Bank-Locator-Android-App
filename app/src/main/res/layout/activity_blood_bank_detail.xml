@@ -4,12 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- App Title -->
+        <!-- Header Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D32F2F"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvAppTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BloodLink"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+
+        <!-- Bank Name -->
         <TextView
             android:id="@+id/tvDetailName"
             android:layout_width="wrap_content"
@@ -19,6 +40,7 @@
             android:textColor="#D32F2F"
             android:text="Blood Bank Name"/>
 
+        <!-- Type -->
         <TextView
             android:id="@+id/tvDetailType"
             android:layout_width="wrap_content"
@@ -26,6 +48,7 @@
             android:text="Type"
             android:layout_marginTop="8dp"/>
 
+        <!-- Phone -->
         <TextView
             android:id="@+id/tvDetailPhone"
             android:layout_width="wrap_content"
@@ -33,6 +56,7 @@
             android:text="Phone"
             android:layout_marginTop="4dp"/>
 
+        <!-- District -->
         <TextView
             android:id="@+id/tvDetailDistrict"
             android:layout_width="wrap_content"
@@ -40,19 +64,23 @@
             android:text="District"
             android:layout_marginTop="4dp"/>
 
+        <!-- Stock Title -->
         <TextView
+            android:id="@+id/tvStockTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Available Stock"
             android:textStyle="bold"
             android:layout_marginTop="20dp"/>
 
+        <!-- Stock Data -->
         <TextView
             android:id="@+id/tvDetailStock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"/>
 
+        <!-- Call Button -->
         <Button
             android:id="@+id/btnCallBank"
             android:layout_width="match_parent"
