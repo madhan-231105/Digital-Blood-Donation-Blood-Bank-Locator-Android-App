@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private DatabaseHelper dbHelper;
 
     private TextView tvName, tvBloodGroup, tvPhone, tvUserDistrict;
     private ImageView imgProfile, btnEdit, btnLogout, btnNotifications;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db = FirebaseFirestore.getInstance();
+        dbHelper = new DatabaseHelper(this);
 
         initViews();
         setupRecyclerView();
@@ -113,15 +115,12 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // 🔔 Notifications Page
         btnNotifications.setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationActivity.class)));
 
-        // 🗺️ Find Blood Banks → OPEN MAP PAGE
         btnOpenMap.setOnClickListener(v ->
                 startActivity(new Intent(this, NearbyMapActivity.class)));
 
-        // 🩸 Request Blood Page
         btnRequest.setOnClickListener(v ->
                 startActivity(new Intent(this, RequestBloodActivity.class)));
     }
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (id == R.id.nav_banks) {
-                startActivity(new Intent(this, BloodBankActivity.class));
+                startActivity(new Intent(this, NearbyMapActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             }
@@ -179,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         tvPhone.setText(user.getPhone());
                         tvUserDistrict.setText("District: " + user.getDistrict());
 
+                        loadProfileImage();  // 🔥 Refresh image
                         loadDonors();
                     }
                 })
@@ -186,9 +186,22 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this,
                                 "Failed to load profile",
                                 Toast.LENGTH_SHORT).show());
+    }
 
-        // 🔹 Load Profile Image
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+    // ================= AUTO REFRESH WHEN RETURNING =================
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserProfile();   // 🔥 reload EVERYTHING
+    }
+
+    // ================= LOAD PROFILE IMAGE =================
+
+    private void loadProfileImage() {
+
+        String uid = mAuth.getCurrentUser().getUid();
+
         Bitmap bmp = dbHelper.getImage(uid);
 
         if (bmp != null) {
